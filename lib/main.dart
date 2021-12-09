@@ -1,13 +1,33 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/screen/addplace.dart';
 import 'package:flutter_application_1/screen/favorite.dart';
 import 'package:flutter_application_1/screen/home.dart';
+import 'package:flutter_application_1/screen/login.dart';
 import 'package:flutter_application_1/screen/profile.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+String active_user = "";
 
 void main() {
-  runApp(MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  checkUser().then((String result) {
+    if (result == '')
+      runApp(MyLogin());
+    else {
+      active_user = result;
+      runApp(MyApp());
+    }
+  });
 }
+
+Future<String> checkUser() async {
+ final prefs = await SharedPreferences.getInstance();
+ String user_id = prefs.getString("user_id") ?? '';
+ return user_id;
+}
+
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -19,6 +39,10 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(title: 'HaloBook'),
+       routes: {
+        'addPlace': (context) => AddPlace(),
+        'login': (context) => Login(),
+      },
     );
   }
 }
@@ -89,7 +113,14 @@ class _MyHomePageState extends State<MyHomePage> {
             title: new Text("Add Place"),
             leading: new Icon(Icons.add, size: 30),
             onTap: () {
-              Navigator.popAndPushNamed(context, 'popularMovie');
+              Navigator.popAndPushNamed(context, 'addPlace');
+            },
+          ),
+          ListTile(
+            title: new Text("Login"),
+            leading: new Icon(Icons.add, size: 30),
+            onTap: () {
+              Navigator.popAndPushNamed(context, 'login');
             },
           ),
         ],
