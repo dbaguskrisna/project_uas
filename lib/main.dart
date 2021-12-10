@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/screen/addplace.dart';
 import 'package:flutter_application_1/screen/favorite.dart';
 import 'package:flutter_application_1/screen/home.dart';
 import 'package:flutter_application_1/screen/profile.dart';
@@ -19,6 +20,7 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(title: 'HaloBook'),
+      routes: {'addPlace': (context) => AddPlace()},
     );
   }
 }
@@ -89,7 +91,7 @@ class _MyHomePageState extends State<MyHomePage> {
             title: new Text("Add Place"),
             leading: new Icon(Icons.add, size: 30),
             onTap: () {
-              Navigator.popAndPushNamed(context, 'popularMovie');
+              Navigator.popAndPushNamed(context, 'addPlace');
             },
           ),
         ],
