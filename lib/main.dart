@@ -2,10 +2,12 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/screen/addplace.dart';
+import 'package:flutter_application_1/screen/editprofile.dart';
 import 'package:flutter_application_1/screen/favorite.dart';
 import 'package:flutter_application_1/screen/home.dart';
 import 'package:flutter_application_1/screen/login.dart';
 import 'package:flutter_application_1/screen/profile.dart';
+import 'package:flutter_application_1/screen/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 String active_user = "";
@@ -38,7 +40,11 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(title: 'HaloBook'),
-      routes: {'addPlace': (context) => AddPlace()},
+      routes: {
+        'addPlace': (context) => AddPlace(),
+        'editProfile': (context) => EditProfile(),
+        'register': (context) => RegisterProfile()
+      },
     );
   }
 }
@@ -92,38 +98,12 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget navigationDrawer() {
-    return Drawer(
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: <Widget>[
-          DrawerHeader(
-              decoration: BoxDecoration(
-                color: Colors.blue,
-              ),
-              child: Text(
-                'Drawer Header',
-                style: TextStyle(fontSize: 20, color: Colors.white),
-              )),
-          ListTile(
-            title: new Text("Add Place"),
-            leading: new Icon(Icons.add, size: 30),
-            onTap: () {
-              Navigator.popAndPushNamed(context, 'addPlace');
-            },
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
           title: Text(widget.title),
         ),
-        drawer: navigationDrawer(),
         body: _screens[_currentIndex],
         bottomNavigationBar: bottomNavigation());
   }

@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/screen/editprofile.dart';
+import 'package:flutter_application_1/screen/register.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../main.dart';
 
@@ -42,7 +44,7 @@ class _LoginState extends State<Login> {
           title: Text('Login'),
         ),
         body: Container(
-          height: 300,
+          height: 320,
           margin: EdgeInsets.all(20),
           padding: EdgeInsets.all(20),
           decoration: BoxDecoration(
@@ -97,6 +99,20 @@ class _LoginState extends State<Login> {
                     ),
                   ),
                 )),
+            Container(
+              child: InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => RegisterProfile()),
+                  );
+                },
+                child: new Padding(
+                  padding: new EdgeInsets.all(10.0),
+                  child: new Text("Don't have an account ? register here"),
+                ),
+              ),
+            )
           ]),
         ));
   }
