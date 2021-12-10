@@ -4,10 +4,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/screen/addplace.dart';
 import 'package:flutter_application_1/screen/favorite.dart';
 import 'package:flutter_application_1/screen/home.dart';
+import 'package:flutter_application_1/screen/login.dart';
 import 'package:flutter_application_1/screen/profile.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+String active_user = "";
 
 void main() {
-  runApp(MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  checkUser().then((String result) {
+    if (result == '')
+      runApp(MyLogin());
+    else {
+      active_user = result;
+      runApp(MyApp());
+    }
+  });
+}
+
+Future<String> checkUser() async {
+  final prefs = await SharedPreferences.getInstance();
+  String user_id = prefs.getString("user_id") ?? '';
+  return user_id;
 }
 
 class MyApp extends StatelessWidget {
