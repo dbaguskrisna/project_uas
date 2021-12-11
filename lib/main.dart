@@ -24,7 +24,7 @@ void main() {
   });
 }
 
-checkUser() async {
+Future<String> checkUser() async {
   final prefs = await SharedPreferences.getInstance();
   String user_id = prefs.getString("email") ?? '';
   return user_id;
@@ -42,7 +42,9 @@ class MyApp extends StatelessWidget {
       home: MyHomePage(title: 'HaloBook'),
       routes: {
         'addPlace': (context) => AddPlace(),
-        'editProfile': (context) => EditProfile(),
+        'editProfile': (context) => EditProfile(
+              email: active_user,
+            ),
         'register': (context) => RegisterProfile()
       },
     );

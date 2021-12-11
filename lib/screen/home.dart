@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/class/popMovie.dart';
 import 'package:flutter_application_1/screen/favorite.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -16,6 +17,7 @@ List<PopMovie> PMs = [];
 
 class _MyAppState extends State<Home> {
   String _temp = 'waiting API respond…';
+  String _email = "";
 
   Future<String> fetchData() async {
     final response = await http
@@ -32,6 +34,7 @@ class _MyAppState extends State<Home> {
     Future<String> data = fetchData();
     data.then((value) {
       Map json = jsonDecode(value);
+      print("home: " + json['data'].toString());
       for (var mov in json['data']) {
         PopMovie pm = PopMovie.fromJson(mov);
         PMs.add(pm);

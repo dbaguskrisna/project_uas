@@ -35,10 +35,9 @@ class _LoginState extends State<Login> {
     final response = await http.post(
         Uri.parse("https://ubaya.fun/flutter/160718049/uas_login.php"),
         body: {'email': _user_id, 'password': _user_password});
-    print("email: " + _user_id + "password : " + _user_password);
     if (response.statusCode == 200) {
       Map json = jsonDecode(response.body);
-      print(json);
+
       if (json['result'] == 'success') {
         final prefs = await SharedPreferences.getInstance();
         prefs.setString("email", json['email']);

@@ -1,18 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/class/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class EditProfile extends StatefulWidget {
+  String email;
+  EditProfile({Key key, @required this.email}) : super(key: key);
   @override
   EditPopMovieState createState() {
     return EditPopMovieState();
   }
-}
-
-String active_user = "";
-Future<String> checkUser() async {
-  final prefs = await SharedPreferences.getInstance();
-  active_user = prefs.getString("email") ?? '';
 }
 
 class EditPopMovieState extends State<EditProfile> {
@@ -21,6 +20,46 @@ class EditPopMovieState extends State<EditProfile> {
   String _name = "";
   final _controllerdate = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+
+  TextEditingController _emailCont = new TextEditingController();
+  TextEditingController _fullnameCont = new TextEditingController();
+  TextEditingController _birthDate = new TextEditingController();
+
+  String _user = "";
+
+  @override
+  void initState() {
+    super.initState();
+
+    bacaData();
+  }
+
+  Future<String> fetchData() async {
+    print(_user.toString());
+    final response = await http.post(
+        Uri.parse("https://ubaya.fun/flutter/160718049/edit_user.php"),
+        body: {'email': widget.email.toString()});
+
+    if (response.statusCode == 200) {
+      return response.body;
+    } else {
+      throw Exception('Failed to read API');
+    }
+  }
+
+  User pm;
+  bacaData() {
+    fetchData().then((value) {
+      Map json = jsonDecode(value);
+      print(json);
+      pm = User.fromJson(json['data']);
+      setState(() {
+        _emailCont.text = pm.email;
+        _fullnameCont.text = pm.fullname;
+        _birthDate.text = pm.date;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,8 +80,9 @@ class EditPopMovieState extends State<EditProfile> {
                         labelText: 'Email',
                       ),
                       onChanged: (value) {
-                        _email = value;
+                        pm.email = value;
                       },
+                      controller: _emailCont,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'email can not be empty';
@@ -57,8 +97,9 @@ class EditPopMovieState extends State<EditProfile> {
                         labelText: 'Your Fullname',
                       ),
                       onChanged: (value) {
-                        _name = value;
+                        pm.fullname = value;
                       },
+                      controller: _fullnameCont,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'fullname can not be empty';
@@ -76,7 +117,7 @@ class EditPopMovieState extends State<EditProfile> {
                             decoration: const InputDecoration(
                               labelText: 'Enter Your Birth Date',
                             ),
-                            controller: _controllerdate,
+                            controller: _birthDate,
                           )),
                           ElevatedButton(
                               onPressed: () {
@@ -113,7 +154,7 @@ class EditPopMovieState extends State<EditProfile> {
                 ),
                 Padding(
                   padding: EdgeInsets.all(15),
-                  child: Text(active_user.toString()),
+                  child: Text(_user),
                 )
               ],
             )));
