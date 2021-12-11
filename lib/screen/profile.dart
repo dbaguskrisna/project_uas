@@ -14,7 +14,7 @@ class _MyAppState extends State<Profile> {
 
   void doLogout() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.remove("user_id");
+    prefs.remove("email");
     main();
   }
 

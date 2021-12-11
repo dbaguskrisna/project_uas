@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/screen/editprofile.dart';
 import 'package:flutter_application_1/screen/register.dart';
@@ -32,9 +32,25 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   void doLogin() async {
-    final prefs = await SharedPreferences.getInstance();
-    prefs.setString("user_id", _user_id);
-    main();
+    final response = await http.post(
+        Uri.parse("https://ubaya.fun/flutter/160718049/uas_login.php"),
+        body: {'email': _user_id, 'password': _user_password});
+    print("email: " + _user_id + "password : " + _user_password);
+    if (response.statusCode == 200) {
+      Map json = jsonDecode(response.body);
+      print(json);
+      if (json['result'] == 'success') {
+        final prefs = await SharedPreferences.getInstance();
+        prefs.setString("email", json['email']);
+        main();
+      } else {
+        setState(() {
+          error_login = "User id atau password error";
+        });
+      }
+    } else {
+      throw Exception('Failed to read API');
+    }
   }
 
   @override

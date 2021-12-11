@@ -1,5 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter_application_1/class/popMovie.dart';
+import 'package:flutter_application_1/screen/favorite.dart';
+import 'package:http/http.dart' as http;
 
 class Home extends StatefulWidget {
   @override
@@ -8,75 +12,94 @@ class Home extends StatefulWidget {
   }
 }
 
+List<PopMovie> PMs = [];
+
 class _MyAppState extends State<Home> {
+  String _temp = 'waiting API respond…';
+
+  Future<String> fetchData() async {
+    final response = await http
+        .post(Uri.parse("https://ubaya.fun/flutter/160718049/villa.php"));
+    if (response.statusCode == 200) {
+      return response.body;
+    } else {
+      throw Exception('Failed to read API');
+    }
+  }
+
+  bacaData() {
+    PMs.clear();
+    Future<String> data = fetchData();
+    data.then((value) {
+      Map json = jsonDecode(value);
+      for (var mov in json['data']) {
+        PopMovie pm = PopMovie.fromJson(mov);
+        PMs.add(pm);
+      }
+      setState(() {
+        _temp = PMs[2].description;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    bacaData();
+  }
+
+  Widget DaftarPopMovie(PopMovs) {
+    if (PopMovs != null) {
+      return ListView.builder(
+          padding: EdgeInsets.all(16.0),
+          itemCount: PopMovs.length,
+          itemBuilder: (BuildContext ctxt, int index) {
+            return new Card(
+                elevation: 4.0,
+                child: Column(children: [
+                  ListTile(
+                    title: Text(PMs[index].name.toString()),
+                    subtitle: Text(PMs[index].price.toString()),
+                    trailing: IconButton(
+                      icon: Icon(
+                        Icons.favorite_border_outlined,
+                      ),
+                      splashColor: Colors.red,
+                      onPressed: () {},
+                    ),
+                  ),
+                  Container(
+                    height: 150.0,
+                    child: Ink.image(
+                      image: NetworkImage(PMs[index].image.toString()),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  ButtonBar(
+                    children: [
+                      TextButton(
+                        child: const Text('VIEW DETAIL'),
+                        onPressed: () {},
+                      ),
+                    ],
+                  )
+                ]));
+          });
+    } else {
+      return CircularProgressIndicator();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
+      body: ListView(
         children: [
-          Container(
-            alignment: Alignment.topLeft,
-            padding: EdgeInsets.all(15.0),
-            child: Text(
-              "Looking for a Hotel or Villa in Bali ?",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w700,
-              ),
-              textAlign: TextAlign.left,
-            ),
-          ),
-          Container(
-            padding: EdgeInsets.only(top: 20, bottom: 20),
-            child: CarouselSlider(
-              items: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(20),
-                    image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: NetworkImage(
-                            "https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80")),
-                  ),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(
-                              "https://images.unsplash.com/photo-1618773928121-c32242e63f39?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80"))),
-                ),
-                Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(
-                              "https://images.unsplash.com/photo-1582719508461-905c673771fd?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1025&q=80"))),
-                ),
-              ],
-              options: CarouselOptions(
-                height: 200,
-                aspectRatio: 16 / 9,
-                viewportFraction: 0.8,
-                initialPage: 0,
-                enableInfiniteScroll: true,
-                reverse: false,
-                autoPlay: true,
-                autoPlayInterval: Duration(seconds: 4),
-                autoPlayAnimationDuration: Duration(milliseconds: 800),
-                autoPlayCurve: Curves.fastOutSlowIn,
-                enlargeCenterPage: true,
-                scrollDirection: Axis.horizontal,
-              ),
-            ),
-          ),
           Container(
             alignment: Alignment.center,
             padding: EdgeInsets.all(15.0),
             child: Text(
-              "Our Recomendation",
+              "Looking for a Villa in Bali ?",
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w700,
@@ -84,6 +107,10 @@ class _MyAppState extends State<Home> {
               textAlign: TextAlign.left,
             ),
           ),
+          Container(
+            height: MediaQuery.of(context).size.height,
+            child: DaftarPopMovie(PMs),
+          )
         ],
       ),
     );

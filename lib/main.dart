@@ -24,9 +24,9 @@ void main() {
   });
 }
 
-Future<String> checkUser() async {
+checkUser() async {
   final prefs = await SharedPreferences.getInstance();
-  String user_id = prefs.getString("user_id") ?? '';
+  String user_id = prefs.getString("email") ?? '';
   return user_id;
 }
 

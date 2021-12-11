@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class EditProfile extends StatefulWidget {
   @override
   EditPopMovieState createState() {
     return EditPopMovieState();
   }
+}
+
+String active_user = "";
+Future<String> checkUser() async {
+  final prefs = await SharedPreferences.getInstance();
+  active_user = prefs.getString("email") ?? '';
 }
 
 class EditPopMovieState extends State<EditProfile> {
@@ -18,7 +26,7 @@ class EditPopMovieState extends State<EditProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Edit Popular Movie"),
+          title: Text("Edit Profile"),
         ),
         body: Form(
             key: _formKey,
@@ -90,23 +98,6 @@ class EditPopMovieState extends State<EditProfile> {
                                 size: 24.0,
                               ))
                         ])),
-                Padding(
-                    padding: EdgeInsets.all(15),
-                    child: TextFormField(
-                      obscureText: true,
-                      decoration: const InputDecoration(
-                        labelText: 'Password',
-                      ),
-                      onChanged: (value) {
-                        _password = value;
-                      },
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'password can not be empty';
-                        }
-                        return null;
-                      },
-                    )),
                 Align(
                   child: ElevatedButton(
                     onPressed: () {
@@ -117,9 +108,13 @@ class EditPopMovieState extends State<EditProfile> {
                         );
                       }
                     },
-                    child: const Text('Register Data'),
+                    child: const Text('Update Data'),
                   ),
                 ),
+                Padding(
+                  padding: EdgeInsets.all(15),
+                  child: Text(active_user.toString()),
+                )
               ],
             )));
   }

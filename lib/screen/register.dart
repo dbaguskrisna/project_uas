@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class RegisterProfile extends StatelessWidget {
   const RegisterProfile({Key key}) : super(key: key);
@@ -35,9 +38,30 @@ class MyCustomFormState extends State<MyCustomForm> {
   String _email = "";
   String _password = "";
   String _name = "";
-
   final _controllerdate = TextEditingController();
+
   final _formKey = GlobalKey<FormState>();
+
+  void submit() async {
+    final response = await http.post(
+        Uri.parse("https://ubaya.fun/flutter/160718049/register.php"),
+        body: {
+          'email': _email,
+          'password': _password,
+          'fullname': _name,
+          'birth_date': _controllerdate.text,
+        });
+    print("ini password" + _password);
+    if (response.statusCode == 200) {
+      Map json = jsonDecode(response.body);
+      if (json['result'] == 'success') {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Sukses Menambah Data')));
+      }
+    } else {
+      throw Exception('Failed to read API');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -129,10 +153,11 @@ class MyCustomFormState extends State<MyCustomForm> {
           Align(
             child: ElevatedButton(
               onPressed: () {
+                submit();
                 // Validate returns true if the form is valid, or false otherwise.
                 if (!_formKey.currentState.validate()) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Please check your')),
+                    const SnackBar(content: Text('Please check your data')),
                   );
                 }
               },
