@@ -61,6 +61,31 @@ class EditPopMovieState extends State<EditProfile> {
     });
   }
 
+  void submit() async {
+    print("halo" + pm.fullname);
+    print("tanggal" + pm.date.toString());
+    final response = await http.post(
+        Uri.parse("https://ubaya.fun/flutter/160718049/update_user.php"),
+        body: {
+          'fullname': pm.fullname,
+          'birth_date': pm.date.toString(),
+          'email': widget.email.toString()
+        });
+    if (response.statusCode == 200) {
+      print(response.body);
+      Map json = jsonDecode(response.body);
+      if (json['result'] == 'success') {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Sukses mengubah Data')));
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Gagal mengubah Data')));
+      }
+    } else {
+      throw Exception('Failed to read API');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -128,7 +153,7 @@ class EditPopMovieState extends State<EditProfile> {
                                         lastDate: DateTime(2200))
                                     .then((value) {
                                   setState(() {
-                                    _controllerdate.text =
+                                    _birthDate.text =
                                         value.toString().substring(0, 10);
                                   });
                                 });
@@ -142,11 +167,11 @@ class EditPopMovieState extends State<EditProfile> {
                 Align(
                   child: ElevatedButton(
                     onPressed: () {
-                      // Validate returns true if the form is valid, or false otherwise.
                       if (!_formKey.currentState.validate()) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Please check your')),
-                        );
+                            SnackBar(content: Text('Harap Isian diperbaiki')));
+                      } else {
+                        submit();
                       }
                     },
                     child: const Text('Update Data'),
