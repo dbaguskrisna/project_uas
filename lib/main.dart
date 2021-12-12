@@ -8,6 +8,7 @@ import 'package:flutter_application_1/screen/home.dart';
 import 'package:flutter_application_1/screen/login.dart';
 import 'package:flutter_application_1/screen/profile.dart';
 import 'package:flutter_application_1/screen/register.dart';
+import 'package:flutter_application_1/screen/viewdetail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 String active_user = "";
@@ -45,7 +46,7 @@ class MyApp extends StatelessWidget {
         'editProfile': (context) => EditProfile(
               email: active_user,
             ),
-        'register': (context) => RegisterProfile()
+        'register': (context) => RegisterProfile(),
       },
     );
   }

@@ -10,7 +10,7 @@ class PopMovie {
     return PopMovie(
         id: json['idhotel'],
         name: json['name'],
-        description: json['overview'],
+        description: json['description'],
         price: json['price'],
         image: json['image']);
   }

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/class/popMovie.dart';
 import 'package:flutter_application_1/screen/favorite.dart';
+import 'package:flutter_application_1/screen/viewdetail.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -82,8 +83,16 @@ class _MyAppState extends State<Home> {
                     children: [
                       TextButton(
                         child: const Text('VIEW DETAIL'),
-                        onPressed: () {},
-                      ),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  DetailPop(idhotel: PMs[index].id),
+                            ),
+                          );
+                        },
+                      )
                     ],
                   )
                 ]));

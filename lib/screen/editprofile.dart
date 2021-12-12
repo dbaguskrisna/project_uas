@@ -68,7 +68,7 @@ class EditPopMovieState extends State<EditProfile> {
         Uri.parse("https://ubaya.fun/flutter/160718049/update_user.php"),
         body: {
           'fullname': pm.fullname,
-          'birth_date': pm.date.toString(),
+          'birth_date': _birthDate.text.toString(),
           'email': widget.email.toString()
         });
     if (response.statusCode == 200) {
