@@ -1,32 +1,25 @@
 import 'dart:convert';
-import 'package:image_picker/image_picker.dart';
 
-import 'package:image/image.dart' as img;
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/class/user.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:io';
 
-class EditProfile extends StatefulWidget {
+class AddReview extends StatefulWidget {
   String email;
-  EditProfile({Key key, @required this.email}) : super(key: key);
+  AddReview({Key key, @required this.email}) : super(key: key);
   @override
   EditPopMovieState createState() {
     return EditPopMovieState();
   }
 }
 
-class EditPopMovieState extends State<EditProfile> {
+class EditPopMovieState extends State<AddReview> {
   String _email = "";
   String _password = "";
   String _name = "";
   final _controllerdate = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  String urlImage = "";
-  File _image = null;
-  File _imageProses = null;
 
   TextEditingController _emailCont = new TextEditingController();
   TextEditingController _fullnameCont = new TextEditingController();
@@ -37,7 +30,8 @@ class EditPopMovieState extends State<EditProfile> {
   @override
   void initState() {
     super.initState();
-    bacaDataEdit();
+
+    bacaData();
   }
 
   Future<String> fetchData() async {
@@ -54,7 +48,7 @@ class EditPopMovieState extends State<EditProfile> {
   }
 
   User pm;
-  void bacaDataEdit() {
+  bacaData() {
     fetchData().then((value) {
       Map json = jsonDecode(value);
       print(json);
@@ -63,7 +57,6 @@ class EditPopMovieState extends State<EditProfile> {
         _emailCont.text = pm.email;
         _fullnameCont.text = pm.fullname;
         _birthDate.text = pm.date;
-        urlImage = pm.image;
       });
     });
   }
@@ -76,106 +69,21 @@ class EditPopMovieState extends State<EditProfile> {
         body: {
           'fullname': pm.fullname,
           'birth_date': _birthDate.text.toString(),
-          'email': widget.email.toString(),
-          'image': "https://ubaya.fun/flutter/160718049/images/" +
-              pm.iduser.toString() +
-              ".jpg"
+          'email': widget.email.toString()
         });
     if (response.statusCode == 200) {
       print(response.body);
-
       Map json = jsonDecode(response.body);
       if (json['result'] == 'success') {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text('Sukses mengubah Data')));
-      }
-      List<int> imageBytes = _image.readAsBytesSync();
-      print(imageBytes);
-      String base64Image = base64Encode(imageBytes);
-      final response2 = await http.post(
-          Uri.parse(
-            'https://ubaya.fun/flutter/160718049/upload_image2.php',
-          ),
-          body: {
-            'id': pm.iduser.toString(),
-            'image': base64Image,
-          });
-      if (response2.statusCode == 200) {
+      } else {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(response2.body)));
+            .showSnackBar(SnackBar(content: Text('Gagal mengubah Data')));
       }
     } else {
       throw Exception('Failed to read API');
     }
-  }
-
-  void prosesFoto() {
-    Future<Directory> extDir = getExternalStorageDirectory();
-    extDir.then((value) {
-      String _timestamp() => DateTime.now().millisecondsSinceEpoch.toString();
-      final String filePath = value.path + '/${_timestamp()}.jpg';
-      _imageProses = File(filePath);
-      img.Image temp = img.readJpg(_image.readAsBytesSync());
-      img.Image temp2 = img.copyResize(temp, width: 200, height: 200);
-      setState(() {
-        _imageProses.writeAsBytesSync(img.writeJpg(temp2));
-      });
-    });
-  }
-
-  _imgGaleri() async {
-    final picker = ImagePicker();
-    final image = await picker.getImage(
-        source: ImageSource.gallery,
-        imageQuality: 50,
-        maxHeight: 200,
-        maxWidth: 200);
-    setState(() {
-      _image = File(image.path);
-      prosesFoto();
-    });
-  }
-
-  _imgKamera() async {
-    final picker = ImagePicker();
-    final image =
-        await picker.getImage(source: ImageSource.camera, imageQuality: 20);
-    setState(() {
-      _image = File(image.path);
-      prosesFoto();
-    });
-  }
-
-  void _showPicker(context) {
-    showModalBottomSheet(
-        context: context,
-        builder: (BuildContext bc) {
-          return SafeArea(
-            child: Container(
-              color: Colors.white,
-              child: new Wrap(
-                children: <Widget>[
-                  new ListTile(
-                      tileColor: Colors.white,
-                      leading: new Icon(Icons.photo_library),
-                      title: new Text('Galeri'),
-                      onTap: () {
-                        _imgGaleri();
-                        Navigator.of(context).pop();
-                      }),
-                  new ListTile(
-                    leading: new Icon(Icons.photo_camera),
-                    title: new Text('Kamera'),
-                    onTap: () {
-                      _imgKamera();
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
   }
 
   @override
@@ -189,27 +97,6 @@ class EditPopMovieState extends State<EditProfile> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  alignment: Alignment.center,
-                  padding: EdgeInsets.all(20),
-                  child: _imageProses != null
-                      ? Image.file(_imageProses)
-                      : Image.network(urlImage),
-                  height: 200,
-                  width: 200,
-                ),
-                Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.all(10),
-                    child: InkWell(
-                      onTap: () {
-                        _showPicker(context);
-                      },
-                      child: Text(
-                        "Change Image",
-                        style: TextStyle(color: Colors.blue),
-                      ),
-                    )),
                 Padding(
                     padding: EdgeInsets.all(15),
                     child: TextFormField(
