@@ -5,7 +5,6 @@ class User {
   String fullname;
   String date;
   String image;
-
   User(
       {this.iduser,
       this.email,

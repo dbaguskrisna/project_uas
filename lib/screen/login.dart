@@ -59,7 +59,7 @@ class _LoginState extends State<Login> {
           title: Text('Login'),
         ),
         body: Container(
-          height: 320,
+          height: 350,
           margin: EdgeInsets.all(20),
           padding: EdgeInsets.all(20),
           decoration: BoxDecoration(

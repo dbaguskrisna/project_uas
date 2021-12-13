@@ -3,7 +3,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/screen/addplace.dart';
 import 'package:flutter_application_1/screen/editprofile.dart';
-import 'package:flutter_application_1/screen/favorite.dart';
 import 'package:flutter_application_1/screen/home.dart';
 import 'package:flutter_application_1/screen/login.dart';
 import 'package:flutter_application_1/screen/profile.dart';
@@ -63,7 +62,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
 
-  List<Widget> _screens = [Home(), Favorite(), Profile()];
+  List<Widget> _screens = [Home(), Profile(email: active_user)];
 
   Widget bottomNavigation() {
     return BottomNavigationBar(
@@ -74,13 +73,6 @@ class _MyHomePageState extends State<MyHomePage> {
           label: "Home",
           icon: Icon(
             Icons.home,
-            color: Colors.blue,
-          ),
-        ),
-        BottomNavigationBarItem(
-          label: "Favorite",
-          icon: Icon(
-            Icons.favorite,
             color: Colors.blue,
           ),
         ),

@@ -20,7 +20,7 @@ class DetailPop extends StatefulWidget {
 }
 
 class _DetailPopState extends State<DetailPop> {
-  PopMovie pm;
+  HotelList pm;
   String _user;
 
   @override
@@ -79,8 +79,7 @@ class _DetailPopState extends State<DetailPop> {
   bacaData() {
     fetchData().then((value) {
       Map json = jsonDecode(value);
-      print("ini json" + json.toString());
-      pm = PopMovie.fromJson(json['data']);
+      pm = HotelList.fromJson(json['data']);
 
       setState(() {});
     });

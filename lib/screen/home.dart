@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/class/popMovie.dart';
-import 'package:flutter_application_1/screen/favorite.dart';
 import 'package:flutter_application_1/screen/viewdetail.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,7 +13,7 @@ class Home extends StatefulWidget {
   }
 }
 
-List<PopMovie> PMs = [];
+List<HotelList> PMs = [];
 
 class _MyAppState extends State<Home> {
   String _temp = 'waiting API respond…';
@@ -37,7 +36,7 @@ class _MyAppState extends State<Home> {
       Map json = jsonDecode(value);
       print("home: " + json['data'].toString());
       for (var mov in json['data']) {
-        PopMovie pm = PopMovie.fromJson(mov);
+        HotelList pm = HotelList.fromJson(mov);
         PMs.add(pm);
       }
       setState(() {
@@ -49,7 +48,9 @@ class _MyAppState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    bacaData();
+    setState(() {
+      bacaData();
+    });
   }
 
   Widget DaftarPopMovie(PopMovs) {
@@ -120,7 +121,7 @@ class _MyAppState extends State<Home> {
             ),
           ),
           Container(
-            height: MediaQuery.of(context).size.height,
+            height: MediaQuery.of(context).size.height - 200,
             child: DaftarPopMovie(PMs),
           )
         ],

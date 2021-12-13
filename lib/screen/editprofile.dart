@@ -37,6 +37,7 @@ class EditPopMovieState extends State<EditProfile> {
   @override
   void initState() {
     super.initState();
+
     bacaDataEdit();
   }
 
@@ -77,9 +78,6 @@ class EditPopMovieState extends State<EditProfile> {
           'fullname': pm.fullname,
           'birth_date': _birthDate.text.toString(),
           'email': widget.email.toString(),
-          'image': "https://ubaya.fun/flutter/160718049/images/" +
-              pm.iduser.toString() +
-              ".jpg"
         });
     if (response.statusCode == 200) {
       print(response.body);
@@ -190,11 +188,12 @@ class EditPopMovieState extends State<EditProfile> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  alignment: Alignment.center,
+                  alignment: Alignment.centerRight,
                   padding: EdgeInsets.all(20),
                   child: _imageProses != null
                       ? Image.file(_imageProses)
-                      : Image.network(urlImage),
+                      : Image.network(
+                          "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"),
                   height: 200,
                   width: 200,
                 ),

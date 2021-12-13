@@ -1,4 +1,4 @@
-class PopMovie {
+class HotelList {
   int id;
   String name;
   String description;
@@ -7,7 +7,7 @@ class PopMovie {
   final List review;
   final List user;
 
-  PopMovie(
+  HotelList(
       {this.id,
       this.name,
       this.description,
@@ -15,8 +15,8 @@ class PopMovie {
       this.image,
       this.review,
       this.user});
-  factory PopMovie.fromJson(Map<String, dynamic> json) {
-    return PopMovie(
+  factory HotelList.fromJson(Map<String, dynamic> json) {
+    return HotelList(
         id: json['idhotel'],
         name: json['name'],
         description: json['description'],
