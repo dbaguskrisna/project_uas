@@ -1,12 +1,18 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/class/popMovie.dart';
+import 'package:flutter_application_1/screen/review.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DetailPop extends StatefulWidget {
   final int idhotel;
-  DetailPop({Key key, @required this.idhotel}) : super(key: key);
+  final String email;
+
+  DetailPop({Key key, @required this.idhotel, @required this.email})
+      : super(key: key);
   @override
   State<StatefulWidget> createState() {
     return _DetailPopState();
@@ -15,25 +21,37 @@ class DetailPop extends StatefulWidget {
 
 class _DetailPopState extends State<DetailPop> {
   PopMovie pm;
+  String _user;
 
   @override
   void initState() {
     super.initState();
     bacaData();
+    _loadUser();
   }
 
-  void delete() async {
+  void delete(delete) async {
+    print("idreview" + delete);
+    print("idhotel" + widget.idhotel.toString());
+    print("user " + _user);
     final response = await http.post(
-        Uri.parse("https://ubaya.fun/flutter/160718049/delete.php"),
-        body: {'id': widget.idhotel.toString()});
+        Uri.parse("https://ubaya.fun/flutter/160718049/delete_review.php"),
+        body: {
+          'idreview': delete.toString(),
+          'idhotel': widget.idhotel.toString(),
+        });
     if (response.statusCode == 200) {
+      print(response.body);
       Map json = jsonDecode(response.body);
       if (json['result'] == 'success') {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Sukses Menghapus Data')));
+            .showSnackBar(SnackBar(content: Text('Sukses menghapus review')));
+        setState(() {
+          bacaData();
+        });
       } else {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Gagal Menghapus Data')));
+        ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Tidak dapat menghapus review')));
       }
     } else {
       throw Exception('Failed to read API');
@@ -42,7 +60,7 @@ class _DetailPopState extends State<DetailPop> {
 
   Future<String> fetchData() async {
     final response = await http.post(
-        Uri.parse("https://ubaya.fun/flutter/160718049/detailvilla.php"),
+        Uri.parse("https://ubaya.fun/flutter/160718049/detail_villa.php"),
         body: {'id': widget.idhotel.toString()});
     if (response.statusCode == 200) {
       return response.body;
@@ -61,8 +79,17 @@ class _DetailPopState extends State<DetailPop> {
   bacaData() {
     fetchData().then((value) {
       Map json = jsonDecode(value);
+      print("ini json" + json.toString());
       pm = PopMovie.fromJson(json['data']);
+
       setState(() {});
+    });
+  }
+
+  _loadUser() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _user = (prefs.getString('email') ?? '');
     });
   }
 
@@ -89,10 +116,54 @@ class _DetailPopState extends State<DetailPop> {
                 child: Text(pm.description, style: TextStyle(fontSize: 15))),
             Padding(
                 padding: EdgeInsets.all(10),
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: pm.review.length,
+                  itemBuilder: (BuildContext ctxt, int index) {
+                    return new Card(
+                      child: Column(children: <Widget>[
+                        ListTile(
+                          leading: Icon(Icons.person_outline_rounded),
+                          title: Text(pm.review[index]['user'] +
+                              "\n" +
+                              pm.review[index]['reviewcol']),
+                          trailing: IconButton(
+                            icon: Icon(
+                              Icons.close,
+                            ),
+                            splashColor: Colors.red,
+                            onPressed: () {
+                              if (pm.review[index]['user'] == _user) {
+                                delete(pm.review[index]['idreview'].toString());
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                        content: Text('Cannot delete review')));
+                              }
+                            },
+                          ),
+                        ),
+                      ]),
+                      elevation: 8,
+                    );
+                  },
+                )),
+            Padding(
+                padding: EdgeInsets.all(10),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                       primary: Colors.blue, onPrimary: Colors.white),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AddReview(
+                          email: widget.email,
+                          idhotel: widget.idhotel.toString(),
+                        ),
+                      ),
+                    ).then(onGoBack);
+                  },
                   child: Text('Add Review'),
                 ))
           ]));

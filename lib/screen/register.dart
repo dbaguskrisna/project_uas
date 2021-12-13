@@ -51,7 +51,6 @@ class MyCustomFormState extends State<MyCustomForm> {
           'fullname': _name,
           'birth_date': _controllerdate.text,
         });
-    print("ini password" + _password);
     if (response.statusCode == 200) {
       Map json = jsonDecode(response.body);
       if (json['result'] == 'success') {

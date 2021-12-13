@@ -64,7 +64,6 @@ class _MyHomePageState extends State<MyHomePage> {
   int _currentIndex = 0;
 
   List<Widget> _screens = [Home(), Favorite(), Profile()];
-  List<String> _title = ['Home', 'Screen', 'History'];
 
   Widget bottomNavigation() {
     return BottomNavigationBar(
